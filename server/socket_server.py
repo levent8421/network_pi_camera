@@ -2,6 +2,7 @@ import socket
 import time
 
 from camera import get_camera
+from .wrapper import ImageWrapper
 
 
 class ConnectionHandler(object):
@@ -16,6 +17,11 @@ class ConnectionHandler(object):
         self._clients.append(client)
         print('New Client Connected ip=[%s], port=[%d]' % (addr[0], addr[1]))
 
+    def _remove_client(self, client):
+        addr = client[1]
+        print('Remove Client [%s]:[%d]' % (addr[0], addr[1]))
+        self._clients.remove(client)
+
     def run(self):
         for client in self._clients:
             sc = client[0]
@@ -24,16 +30,16 @@ class ConnectionHandler(object):
                 message = sc.recv(1024)
                 print('Client [%s] readable [%s]!' % (addr, message))
                 self._send_image(sc)
+            except (ConnectionAbortedError, ConnectionResetError):
+                self._remove_client(client)
             except BlockingIOError:
                 pass
-            except ConnectionAbortedError as e:
-                print(e.__class__)
-
         time.sleep(0.2)
 
     def _send_image(self, client_socket):
         image_bytes = self._camera.capture()
-        client_socket.send(image_bytes)
+        wrapper = ImageWrapper(image_bytes)
+        wrapper.send_to(client_socket)
 
 
 class SocketServer(object):

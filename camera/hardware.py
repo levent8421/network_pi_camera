@@ -72,4 +72,4 @@ def get_camera():
     if is_raspberry_pi():
         return RaspiCamera()
     else:
-        return MockCamera('E:\\private\\python\\network_pi_camera\\img')
+        return MockCamera('D:\\dev\python\\network_pi_camera\\img')

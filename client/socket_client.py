@@ -27,7 +27,6 @@ class SocketClient(object):
                 unwrapper.write(data)
         except BlockingIOError:
             pass
-        time.sleep(0.2)
 
     def close(self):
         self._socket.close()

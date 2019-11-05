@@ -56,11 +56,13 @@ class RaspiCamera(Camera):
     def __init__(self):
         super().__init__()
         self._camera = self._init_camera()
-        self._capture_generator = self._camera.capture_continuous(self._buffer, format='jpeg')
+        self._capture_generator = self._camera.capture_continuous(self._buffer, format='png')
 
     @staticmethod
     def _init_camera():
-        return PiCamera()
+        camera = PiCamera()
+        camera.resolution = (320, 240)
+        return camera
 
     def capture(self):
         self._buffer.seek(0)
@@ -72,4 +74,4 @@ def get_camera():
     if is_raspberry_pi():
         return RaspiCamera()
     else:
-        return MockCamera('D:\\dev\python\\network_pi_camera\\img')
+        return MockCamera('E:/private/python/network_pi_camera/img')
